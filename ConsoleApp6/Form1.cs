@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,9 +18,7 @@ namespace puzz
         Bitmap[] imageArray = new Bitmap[9];
         static List<int> used = new List<int>();
         Bitmap[] correctImages = new Bitmap[9];
-
-
-        bool mouse_clicked =false;
+        
         public Puzzle()
         {
             InitializeComponent();
@@ -30,6 +29,26 @@ namespace puzz
             three.BackgroundImage=one.BackgroundImage;
             one.BackgroundImage = two.BackgroundImage;
             two.BackgroundImage = three.BackgroundImage;
+            if (isSolved())
+            {
+                Application.Exit();     
+            }
+        }
+        private bool isSolved()
+        {
+            if (pictureBox1.BackgroundImage == correctImages[0] &&
+                pictureBox2.BackgroundImage == correctImages[1] &&
+                pictureBox3.BackgroundImage == correctImages[2] &&
+                pictureBox4.BackgroundImage == correctImages[3] &&
+                pictureBox5.BackgroundImage == correctImages[4] &&
+                pictureBox6.BackgroundImage == correctImages[5] &&
+                pictureBox7.BackgroundImage == correctImages[6] &&
+                pictureBox8.BackgroundImage == correctImages[7] &&
+                pictureBox9.BackgroundImage == correctImages[8])
+            {
+                return true;
+            }
+            return false;
         }
         private int GetIndex()
         {
@@ -89,9 +108,26 @@ namespace puzz
             Bitmap ninthCell = originalImage.Clone(rect, originalImage.PixelFormat);
             imageArray[8] = null;
             correctImages[8] = null;
+            if (!solvable())
+            {
+                CreateImages();
+            }
 
         }
-        
+        private bool solvable()
+        {
+            int count = 0;       
+            for(int i=0;i<7;i++)
+            {
+                for(int j=i+1;j<8;j++) {
+                    if (used[i]> used[j])
+                    {
+                        count++;
+                    }
+                }
+            }
+            return count%2==0;
+        }
         private void pictureBox1_Click(object sender, EventArgs e)
         {
             if (pictureBox2.BackgroundImage == null) { Swap(ref pictureBox2, ref pictureBox1); }
@@ -144,24 +180,5 @@ namespace puzz
             if (pictureBox8.BackgroundImage == null) { Swap(ref pictureBox9, ref pictureBox8); }
         }
 
-        private void clicked(object sender, MouseEventArgs e)
-        {
-            if (e.Button== MouseButtons.Left)
-            {
-                mouse_clicked = true;
-            }
-        }
-        private void released(object sender, MouseEventArgs e)
-        {
-            if (e.Button != MouseButtons.Left)
-            {
-                mouse_clicked = false;
-            }
-        }
-
-        private void timer1_Tick(object sender, EventArgs e)
-        {
-            Invalidate();
-        }
     }
 }
