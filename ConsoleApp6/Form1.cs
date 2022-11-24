@@ -31,7 +31,8 @@ namespace puzz
             two.BackgroundImage = three.BackgroundImage;
             if (isSolved())
             {
-                Application.Exit();     
+                string text = "Congratulations,\nYou have solved the puzzle!!!";
+                MessageBox.Show(text);
             }
         }
         private bool isSolved()
